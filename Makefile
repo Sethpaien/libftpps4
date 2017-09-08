@@ -5,6 +5,7 @@ DATA	:=	0x93a500000
 
 CC		:=	gcc
 AS		:=	gcc
+AR		:=	ar
 OBJCOPY	:=	objcopy
 ODIR	:=	build
 SDIR	:=	source
@@ -17,14 +18,12 @@ CFILES	:=	$(wildcard $(SDIR)/*.c)
 SFILES	:=	$(wildcard $(SDIR)/*.s)
 OBJS	:=	$(patsubst $(SDIR)/%.c, $(ODIR)/%.o, $(CFILES)) $(patsubst $(SDIR)/%.s, $(ODIR)/%.o, $(SFILES))
 
-LIBS	:=	-lftpps4 -lPS4
+LIBS	:=	-lPS4
 
-TARGET = $(shell basename $(CURDIR)).bin
+TARGET = $(shell basename $(CURDIR)).a
 
 $(TARGET): $(ODIR) $(OBJS)
-	$(CC) $(LIBPS4)/crt0.s $(ODIR)/*.o -o temp.t $(CFLAGS) $(LFLAGS) $(LIBS)
-	$(OBJCOPY) -O binary temp.t $(TARGET)
-	rm -f temp.t
+	$(AR) rcs $@ $(OBJS)
 
 $(ODIR)/%.o: $(SDIR)/%.c
 	$(CC) -c -o $@ $< $(CFLAGS)
